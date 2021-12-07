@@ -35,5 +35,15 @@ namespace TTT
         {
             playingFieldConfigurator.WipePlayingField();
         }
+
+        public virtual void UpdatePlayerTurn()
+        {
+
+        }
+
+        public virtual void UpdateMe()
+        {
+
+        }
     }
 }

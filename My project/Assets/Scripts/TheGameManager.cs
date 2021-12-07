@@ -33,9 +33,15 @@ namespace TTT
             // Добавить игровые режимы в список доступных режимов
             GameModeInfo plrVSplr = new GameModeInfo(new PlayerVsPlayerGameMode(), "Игрок против Игрока");
             gameModes.Add(plrVSplr);
+            GameModeInfo plrVSpc = new GameModeInfo(new PlayerVsPCGameMode(), "Игрок против Компьютера");
+            gameModes.Add(plrVSpc);
+            GameModeInfo pcVSpc = new GameModeInfo(new PCVsPCGameMode(), "Компьютер против Компьютера");
+            gameModes.Add(pcVSpc);
 
-            SetGameMode("Игрок против Игрока");
+            SetGameMode("Игрок против Компьютера");
             StartGame();
+
+            Debug.Log(currentGameMode.gameModeName);
         }
 
         public void SetGameMode(string newGameModeState)
@@ -53,6 +59,11 @@ namespace TTT
         public void StartGame()
         {
             currentGameMode.gameModeObject.StartGame(1, 3); // Запустить текущий игровой режим
+        }
+
+        public void Update()
+        {
+            currentGameMode.gameModeObject.UpdateMe();
         }
 
         public void PlayerWon(string playerName)

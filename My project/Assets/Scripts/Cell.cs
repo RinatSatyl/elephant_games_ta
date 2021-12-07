@@ -20,15 +20,15 @@ namespace TTT
         {
             displayText.text = "";
             button = GetComponent<Button>();
-            button.onClick.AddListener(OnClick);
+            button.onClick.AddListener(PressOnCell);
         }
         // Чистка если объект уничтожен
         private void OnDestroy()
         {
             button.onClick.RemoveAllListeners();
         }
-
-        private void OnClick()
+        // Метод для "нажатия" на ячейку
+        public void PressOnCell()
         {
             // Проверить, пустая ли ячейка перед тем как вставлять символ
             if (displayText.text == string.Empty)

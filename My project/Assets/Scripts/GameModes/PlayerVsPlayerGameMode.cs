@@ -1,4 +1,4 @@
-﻿// Класс компонент с логикой для игрового режима Игрок против Игрока
+﻿// Класс компонент с логикой для игрового режима Игрок против Компьютера
 
 using System.Collections;
 using System.Collections.Generic;
@@ -28,7 +28,7 @@ namespace TTT
         private Player currentPlayerTurn;
 
         // переключает ход с одного игрока на другого
-        void UpdatePlayerTurn()
+        public override void UpdatePlayerTurn()
         {
             if (currentPlayerTurn.name == player1.name)
             {
@@ -62,7 +62,7 @@ namespace TTT
             // вставить символ игрока в нажатую ячейку
             playingFieldConfigurator.SetCellState(currentPlayerTurn.playingSymbol, x, y);
             // проверить, победил ли текущий игрок 
-            if (playingFieldChecker.CheckForWin(x, y))
+            if (playingFieldChecker.CheckForWin(currentPlayerTurn.playingSymbol, playingFieldConfigurator.PlayingFiledReference))
             {
                 // если да, объявить победу
                 TheGameManager.Instance.PlayerWon(currentPlayerTurn.name);
@@ -70,10 +70,10 @@ namespace TTT
             else 
             {
                 // если нет, проверить заполнены ли все ячейки
-                if (playingFieldChecker.CheckForFieldBeingFilled())
+                if (playingFieldChecker.CheckForFieldBeingFilled(playingFieldConfigurator.PlayingFiledReference))
                 {
                     // Если заполнены, объявить ничью, т.к в проверке на победителя выше, он был не выявлен а ходить больше негде
-                    TheGameManager.Instance.PlayerWon(currentPlayerTurn.name);
+                    TheGameManager.Instance.PlayerDraw();
                 }
                 else 
                     // Если не заполнены, сменить текущего игрока
