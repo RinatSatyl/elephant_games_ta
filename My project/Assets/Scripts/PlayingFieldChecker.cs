@@ -72,13 +72,9 @@ namespace TTT
             // 0OOX
             // 1OXO
             // 2XOO
-            int y = 0;
-            for (int x = gameCells.GetLength(0) - 1; x > 0 ; x--)
-            {
-                if (gameCells[x, y].cellState == symbolToCheckWith)
+            for (int x = 0; x < gameCells.GetLength(0); x++)
+                if (gameCells[((gameCells.GetLength(0) - 1) - x), x].cellState == symbolToCheckWith)
                     cellsDetected++;
-                y++;
-            }
 
             // проверить если количество найденых ячеек с данным символом равняеться горизонтальному размеру поля (победному количеству символов)
             if (cellsDetected == gameCells.GetLength(0))

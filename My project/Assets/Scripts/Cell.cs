@@ -30,10 +30,12 @@ namespace TTT
 
         private void OnClick()
         {
-            TheGameManager.Instance.CurrentGameModeRunningReference.PlayerPressedOnCell(posX, posY);
+            // Проверить, пустая ли ячейка перед тем как вставлять символ
+            if (displayText.text == string.Empty)
+                TheGameManager.Instance.CurrentGameModeRunningReference.PlayerPressedOnCell(posX, posY);
         }
 
-        // Передает этому объекту позицию ячейки на поле
+        // Запомнить к какой позиции на игровом поле привязана эта кнопка
         public void LinkCellState(int x, int y)
         {
             posX = x;

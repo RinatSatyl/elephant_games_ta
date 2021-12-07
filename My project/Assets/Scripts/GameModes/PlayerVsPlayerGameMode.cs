@@ -56,7 +56,7 @@ namespace TTT
                     break;
             }
         }
-
+        // метод для обновления состояния игрового режима когда игрок ставит символ
         public override void PlayerPressedOnCell(int x, int y)
         {
             // вставить символ игрока в нажатую ячейку
@@ -65,7 +65,7 @@ namespace TTT
             if (playingFieldChecker.CheckForWin(x, y))
             {
                 // если да, объявить победу
-                TheGameManager.Instance.PlayerWon(currentPlayerTurn.ToString());
+                TheGameManager.Instance.PlayerWon(currentPlayerTurn.name);
             }
             else 
             {
@@ -73,7 +73,7 @@ namespace TTT
                 if (playingFieldChecker.CheckForFieldBeingFilled())
                 {
                     // Если заполнены, объявить ничью, т.к в проверке на победителя выше, он был не выявлен а ходить больше негде
-                    TheGameManager.Instance.PlayerWon(currentPlayerTurn.ToString());
+                    TheGameManager.Instance.PlayerWon(currentPlayerTurn.name);
                 }
                 else 
                     // Если не заполнены, сменить текущего игрока

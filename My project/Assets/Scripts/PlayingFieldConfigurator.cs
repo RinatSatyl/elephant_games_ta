@@ -35,6 +35,9 @@ namespace TTT
         // Генерирует новое игровое поле с указаными размерами
         public void GeneratePlayingField(int size)
         {
+            // Изменить количество столбцов указаным размером
+            playingFieldObject.constraintCount = size;
+
             // запомнить размер игрового поля, на всякий
             playingFieldSize = size;
 

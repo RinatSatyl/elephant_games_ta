@@ -58,11 +58,13 @@ namespace TTT
         public void PlayerWon(string playerName)
         {
             currentGameMode.gameModeObject.StopGame();
+            Debug.Log(playerName + " won!");
         }
 
         public void PlayerDraw()
         {
             currentGameMode.gameModeObject.StopGame();
+            Debug.Log("Draw");
         }
     }
 }
