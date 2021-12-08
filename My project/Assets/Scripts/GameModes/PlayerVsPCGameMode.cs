@@ -22,13 +22,15 @@ namespace TTT
         }
 
         // игроки
-        private Player HumanPlayer = new Player("Human", "O");
-        private Player PCPlayer = new Player("PC", "X");
+        private Player HumanPlayer = new Player("Человек", "O");
+        private Player PCPlayer = new Player("ПК", "X");
 
         // игрок который ходит в данный момент
         private Player currentPlayerTurn;
+        // объект алгоритма пк противника
         private PCAI PCPlayerAI;
 
+        // задержка между ходами
         const float turnTime = 0.3f;
 
         // Заставляет пк думать (делать ход)
@@ -44,35 +46,48 @@ namespace TTT
         {
             if (currentPlayerTurn.name == HumanPlayer.name)
             {
-                // Во время хода ПК
                 currentPlayerTurn = PCPlayer;
+                // Во время хода ПК, заставиляем алгоритм думать и ходить
                 PCMakeAMove();
+                // Выключаем UI кнопки ячеек чтоб игрок не вмешаться в ходы пк
                 playingFieldConfigurator.DisableButtons(true);
             }
             else
             {
                 currentPlayerTurn = HumanPlayer;
+                // Включить UI кнопки
                 playingFieldConfigurator.DisableButtons(false);
             }
         }
         // метод для инициации игрового режима
         public override void StartGame(int whoIsFirst, int size)
         {
+            // Вызвать базовую, общую логику старта
             base.StartGame(whoIsFirst, size);
 
+            // создать объект пк алгоритма
             PCPlayerAI = new PCAI();
 
+            // установить первого игрока на место 
             switch (whoIsFirst)
             {
                 case 1:
+                    HumanPlayer.playingSymbol = "X";
+                    PCPlayer.playingSymbol = "O";
                     currentPlayerTurn = HumanPlayer;
                     // Пк будет играть на победу/ничью
                     PCPlayerAI.Configure(PCPlayer.playingSymbol, HumanPlayer.playingSymbol, -10, 10, 0);
                     break;
                 case 2:
+                    HumanPlayer.playingSymbol = "O";
+                    PCPlayer.playingSymbol = "X";
                     currentPlayerTurn = HumanPlayer;
                     // Пк будет играть на ничью, стараясь не победить
+                    // Первое значение "-20" -- не дать игроку выиграть ни в коем случае (2ой приоретет)
+                    // Второе значение "-10" -- стараться не сделать ход который приведёт к победе пк (3й приоретет)
+                    // Третье значение "30" -- стараться максимально стремиться к ничьей (1ой приоретет)
                     PCPlayerAI.Configure(PCPlayer.playingSymbol, HumanPlayer.playingSymbol, -20, -10, 30);
+                    // заставить пк игрока ходить
                     StartCoroutine(DelayedUpdatePlayerTurn());
                     break;
                 default:
@@ -88,7 +103,7 @@ namespace TTT
             if (playingFieldChecker.CheckForWin(currentPlayerTurn.playingSymbol, playingFieldConfigurator.PlayingFiledReference))
             {
                 // если да, объявить победу
-                TheGameManager.Instance.PlayerWon(currentPlayerTurn.name);
+                TheGameManager.Instance.PlayerWon(currentPlayerTurn.playingSymbol);
             }
             else 
             {
@@ -105,7 +120,7 @@ namespace TTT
                 }
             }
         }
-
+        // запускает смену игрока с задержкой
         IEnumerator DelayedUpdatePlayerTurn()
         {
             yield return new WaitForSeconds(turnTime);

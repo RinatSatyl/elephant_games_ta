@@ -21,6 +21,8 @@ namespace TTT
             playingFieldChecker = FindObjectOfType<PlayingFieldChecker>();
             // узнать кто ходит первым
             firstToStart = whoIsFirst;
+            // очистить игровое поле
+            playingFieldConfigurator.WipePlayingField();
             // Создать игровое поле
             playingFieldConfigurator.GeneratePlayingField(size);
         }

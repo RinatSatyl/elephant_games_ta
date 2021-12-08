@@ -23,7 +23,7 @@ namespace TTT
             this.myPlayingSymbol = myPlayingSymbol;
             this.opponentPlayingSymbol = opponentPlayingSymbol;
 
-            // Перенять значения настроект алгоритма, какие исходы ставить в приоретет
+            // Перенять значения настроект алгоритма, какие исходы ставить в приоритет
             this.opponentWinScore = opponentWinScore;
             this.myWinScore = myWinScore;
             this.tieScore = tieScore;

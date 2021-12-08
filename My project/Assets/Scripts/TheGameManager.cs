@@ -3,12 +3,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace TTT
 {
     public class TheGameManager : MonoBehaviour
     {
         public static TheGameManager Instance; // Статическая ссылка на этот компонент, для лёгкого доступа 
+
+        [SerializeField] GameObject resultScreen;
+        [SerializeField] GameObject menuScreen;
 
         struct GameModeInfo
         {
@@ -37,11 +41,6 @@ namespace TTT
             gameModes.Add(plrVSpc);
             GameModeInfo pcVSpc = new GameModeInfo(gameObject.AddComponent(typeof(PCVsPCGameMode)) as PCVsPCGameMode, "Компьютер против Компьютера");
             gameModes.Add(pcVSpc);
-
-            SetGameMode("Игрок против Компьютера");
-            StartGame();
-
-            Debug.Log(currentGameMode.gameModeName);
         }
 
         public void SetGameMode(string newGameModeState)
@@ -56,21 +55,33 @@ namespace TTT
             }
         }
         // Метод для запуска текущего игрового режима
-        public void StartGame()
+        public void StartGame(int playOrder, int playSize)
         {
-            currentGameMode.gameModeObject.StartGame(2, 4); // Запустить текущий игровой режим
+            currentGameMode.gameModeObject.StartGame(playOrder, playSize); // Запустить текущий игровой режим
         }
 
         public void PlayerWon(string playerName)
         {
             currentGameMode.gameModeObject.StopGame();
-            Debug.Log(playerName + " won!");
+            ToggleResultScreen();
+            resultScreen.GetComponentInChildren<Text>(includeInactive: true).text = playerName + " победили!";
         }
 
         public void PlayerDraw()
         {
             currentGameMode.gameModeObject.StopGame();
-            Debug.Log("Draw");
+            ToggleResultScreen();
+            resultScreen.GetComponentInChildren<Text>(includeInactive: true).text = "Ничья!";
+        }
+
+        public void ToggleResultScreen()
+        {
+            resultScreen.SetActive(!resultScreen.activeSelf);
+        }
+
+        public void ToggleMenuScreen()
+        {
+            menuScreen.SetActive(!menuScreen.activeSelf);
         }
     }
 }

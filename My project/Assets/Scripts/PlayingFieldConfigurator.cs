@@ -61,15 +61,18 @@ namespace TTT
         // Сносит игровое поле, удалая все её данные
         public void WipePlayingField()
         {
-            // Удалить объект в ячейках
-            for (int y = 0; y < playingField.GetLength(1); y++)
-                for (int x = 0; x < playingField.GetLength(0); x++)
-                    Destroy(playingField[x, y].cellObject);
+            if (playingField != null)
+            {
+                // Удалить объект в ячейках
+                for (int y = 0; y < playingField.GetLength(1); y++)
+                    for (int x = 0; x < playingField.GetLength(0); x++)
+                        Destroy(playingField[x, y].cellObject.gameObject);
 
-            // Сделать playingField null
-            playingField = null;
-            // Сбросить запомненый размер игрового поля
-            playingFieldSize = 0;
+                // Сделать playingField null
+                playingField = null;
+                // Сбросить запомненый размер игрового поля
+                playingFieldSize = 0;
+            }
         }
         // Меняет свойство interactable у кнопки всех ячеек
         public void DisableButtons(bool value)

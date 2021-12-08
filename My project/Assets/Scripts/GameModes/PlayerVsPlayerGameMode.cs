@@ -21,8 +21,8 @@ namespace TTT
         }
 
         // игроки
-        private Player player1 = new Player("Player 1", "O");
-        private Player player2 = new Player("Player 2", "X");
+        private Player player1 = new Player("Игрок 1", "O");
+        private Player player2 = new Player("Игрок 2", "X");
 
         // игрок который ходит в данный момент
         private Player currentPlayerTurn;
@@ -42,18 +42,23 @@ namespace TTT
         // метод для инициации игрового режима
         public override void StartGame(int whoIsFirst, int size)
         {
+            // Вызвать базовую, общую логику старта
             base.StartGame(whoIsFirst, size);
-            switch(whoIsFirst)
+            // установить первого игрока на место 
+            switch (whoIsFirst)
             {
                 case 1:
+                    player1.playingSymbol = "X";
+                    player2.playingSymbol = "O";
                     currentPlayerTurn = player1;
                     break;
                 case 2:
+                    player1.playingSymbol = "O";
+                    player2.playingSymbol = "X";
                     currentPlayerTurn = player2;
                     break;
                 default:
-                    currentPlayerTurn = player1;
-                    break;
+                    goto case 1;
             }
         }
         // метод для обновления состояния игрового режима когда игрок ставит символ
@@ -65,7 +70,7 @@ namespace TTT
             if (playingFieldChecker.CheckForWin(currentPlayerTurn.playingSymbol, playingFieldConfigurator.PlayingFiledReference))
             {
                 // если да, объявить победу
-                TheGameManager.Instance.PlayerWon(currentPlayerTurn.name);
+                TheGameManager.Instance.PlayerWon(currentPlayerTurn.playingSymbol);
             }
             else 
             {
