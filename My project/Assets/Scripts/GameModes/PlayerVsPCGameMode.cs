@@ -30,17 +30,14 @@ namespace TTT
         private PCAI PCPlayerAI;
 
         const float turnTime = 0.3f;
-        float turnTimeTimer = 0;
-        bool activateTimer = false;
 
         // Заставляет пк думать (делать ход)
         void PCMakeAMove()
         {
             // вычислить куда ходить
-            PCPlayerAI.MakeMove(false, playingFieldConfigurator.PlayingFiledReference, out int moveX, out int moveY);
+            PCPlayerAI.MakeMove(playingFieldConfigurator.PlayingFiledReference, out int moveX, out int moveY);
             // сделать ход на вычисленой ячейке
             PlayerPressedOnCell(moveX, moveY);
-            DisableButtons(true);
         }
         // переключает ход с одного игрока на другого
         public override void UpdatePlayerTurn()
@@ -50,10 +47,12 @@ namespace TTT
                 // Во время хода ПК
                 currentPlayerTurn = PCPlayer;
                 PCMakeAMove();
+                playingFieldConfigurator.DisableButtons(true);
             }
             else
             {
                 currentPlayerTurn = HumanPlayer;
+                playingFieldConfigurator.DisableButtons(false);
             }
         }
         // метод для инициации игрового режима
@@ -62,22 +61,22 @@ namespace TTT
             base.StartGame(whoIsFirst, size);
 
             PCPlayerAI = new PCAI();
-            PCPlayerAI.GiveSymbols(PCPlayer.playingSymbol, HumanPlayer.playingSymbol);
 
             switch (whoIsFirst)
             {
                 case 1:
                     currentPlayerTurn = HumanPlayer;
+                    // Пк будет играть на победу/ничью
+                    PCPlayerAI.Configure(PCPlayer.playingSymbol, HumanPlayer.playingSymbol, -10, 10, 0);
                     break;
                 case 2:
                     currentPlayerTurn = HumanPlayer;
-                    activateTimer = true;
-                    turnTimeTimer = turnTime;
-                    DisableButtons(true);
+                    // Пк будет играть на ничью, стараясь не победить
+                    PCPlayerAI.Configure(PCPlayer.playingSymbol, HumanPlayer.playingSymbol, -20, -10, 30);
+                    StartCoroutine(DelayedUpdatePlayerTurn());
                     break;
                 default:
-                    currentPlayerTurn = HumanPlayer;
-                    break;
+                    goto case 1;
             }
         }
         // метод для обновления состояния игрового режима когда игрок ставит символ
@@ -102,35 +101,15 @@ namespace TTT
                 else
                 {
                     // Если не заполнены, сменить текущего игрока
-                    activateTimer = true;
-                    turnTimeTimer = turnTime;
+                    StartCoroutine(DelayedUpdatePlayerTurn());
                 }
             }
         }
 
-        public override void UpdateMe()
+        IEnumerator DelayedUpdatePlayerTurn()
         {
-            if (activateTimer)
-                if (turnTimeTimer > 0)
-                {
-                    turnTimeTimer -= Time.deltaTime;
-                }
-                else
-                {
-                    DisableButtons(false);
-                    activateTimer = false;
-                    UpdatePlayerTurn();
-                }
-        }
-
-        void DisableButtons(bool value)
-        {
-            if (playingFieldConfigurator.PlayingFiledReference != null)
-                for (int x = 0; x < playingFieldConfigurator.PlayingFiledReference.GetLength(0); x++)
-                    for (int y = 0; y < playingFieldConfigurator.PlayingFiledReference.GetLength(0); y++)
-                    {
-                        playingFieldConfigurator.PlayingFiledReference[x, y].cellObject.gameObject.GetComponent<Button>().interactable = !value;
-                    }
+            yield return new WaitForSeconds(turnTime);
+            UpdatePlayerTurn();
         }
 
         public override void StopGame()

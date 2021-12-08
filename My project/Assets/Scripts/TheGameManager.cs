@@ -31,11 +31,11 @@ namespace TTT
         {
             Instance = this; // Задать ссылку
             // Добавить игровые режимы в список доступных режимов
-            GameModeInfo plrVSplr = new GameModeInfo(new PlayerVsPlayerGameMode(), "Игрок против Игрока");
+            GameModeInfo plrVSplr = new GameModeInfo(gameObject.AddComponent(typeof(PlayerVsPlayerGameMode)) as PlayerVsPlayerGameMode, "Игрок против Игрока");
             gameModes.Add(plrVSplr);
-            GameModeInfo plrVSpc = new GameModeInfo(new PlayerVsPCGameMode(), "Игрок против Компьютера");
+            GameModeInfo plrVSpc = new GameModeInfo(gameObject.AddComponent(typeof(PlayerVsPCGameMode)) as PlayerVsPCGameMode, "Игрок против Компьютера");
             gameModes.Add(plrVSpc);
-            GameModeInfo pcVSpc = new GameModeInfo(new PCVsPCGameMode(), "Компьютер против Компьютера");
+            GameModeInfo pcVSpc = new GameModeInfo(gameObject.AddComponent(typeof(PCVsPCGameMode)) as PCVsPCGameMode, "Компьютер против Компьютера");
             gameModes.Add(pcVSpc);
 
             SetGameMode("Игрок против Компьютера");
@@ -58,12 +58,7 @@ namespace TTT
         // Метод для запуска текущего игрового режима
         public void StartGame()
         {
-            currentGameMode.gameModeObject.StartGame(1, 3); // Запустить текущий игровой режим
-        }
-
-        public void Update()
-        {
-            currentGameMode.gameModeObject.UpdateMe();
+            currentGameMode.gameModeObject.StartGame(2, 4); // Запустить текущий игровой режим
         }
 
         public void PlayerWon(string playerName)

@@ -71,5 +71,16 @@ namespace TTT
             // Сбросить запомненый размер игрового поля
             playingFieldSize = 0;
         }
+        // Меняет свойство interactable у кнопки всех ячеек
+        public void DisableButtons(bool value)
+        {
+            if (playingField != null)
+                for (int x = 0; x < playingField.GetLength(0); x++)
+                    for (int y = 0; y < playingField.GetLength(0); y++)
+                    {
+                                                                                                      // ! потому что метод называеться "выключить кнопки"
+                        playingField[x, y].cellObject.gameObject.GetComponent<Button>().interactable = !value;
+                    }
+        }
     }
 }

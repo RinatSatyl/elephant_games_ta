@@ -31,21 +31,20 @@ namespace TTT
         private PCAI PCPlayerAI2;
 
         const float turnTime = 0.3f;
-        float turnTimeTimer = 0;
-        bool activateTimer = false;
 
         // Заставляет пк думать (делать ход)
         void PC1MakeAMove()
         {
-            // вычислить куда ходить
-            PCPlayerAI1.MakeMove(firstToStart == 2, playingFieldConfigurator.PlayingFiledReference, out int moveX, out int moveY);
+            // вычислить найлучший ход
+            PCPlayerAI1.MakeMove(playingFieldConfigurator.PlayingFiledReference, out int moveX, out int moveY);
             // сделать ход на вычисленой ячейке
             PlayerPressedOnCell(moveX, moveY);
         }
+        // Тоже самое что выше, но с объектами второго ПК игрока
         void PC2MakeAMove()
         {
-            // вычислить куда ходить
-            PCPlayerAI2.MakeMove(firstToStart == 2, playingFieldConfigurator.PlayingFiledReference, out int moveX, out int moveY);
+            // вычислить найлучший ход
+            PCPlayerAI2.MakeMove(playingFieldConfigurator.PlayingFiledReference, out int moveX, out int moveY);
             // сделать ход на вычисленой ячейке
             PlayerPressedOnCell(moveX, moveY);
         }
@@ -55,12 +54,12 @@ namespace TTT
             if (currentPlayerTurn.name == PCPlayer1.name)
             {
                 currentPlayerTurn = PCPlayer2;
-                PC1MakeAMove();
+                PC2MakeAMove();
             }
             else
             {
                 currentPlayerTurn = PCPlayer1;
-                PC2MakeAMove();
+                PC1MakeAMove();
             }
         }
         // метод для инициации игрового режима
@@ -70,8 +69,9 @@ namespace TTT
 
             PCPlayerAI1 = new PCAI();
             PCPlayerAI2 = new PCAI();
-            PCPlayerAI1.GiveSymbols(PCPlayer1.playingSymbol, PCPlayer2.playingSymbol);
-            PCPlayerAI2.GiveSymbols(PCPlayer2.playingSymbol, PCPlayer1.playingSymbol);
+
+            PCPlayerAI1.Configure(PCPlayer1.playingSymbol, PCPlayer2.playingSymbol, -10, 10, 5);
+            PCPlayerAI2.Configure(PCPlayer2.playingSymbol, PCPlayer1.playingSymbol, -10, 10, 5);
 
             switch (whoIsFirst)
             {
@@ -82,18 +82,11 @@ namespace TTT
                     currentPlayerTurn = PCPlayer2;
                     break;
                 default:
-                    currentPlayerTurn = PCPlayer1;
-                    break;
+                    goto case 1;
             }
 
-            for(int x = 0; x < playingFieldConfigurator.PlayingFiledReference.GetLength(0); x++)
-                for (int y = 0; y < playingFieldConfigurator.PlayingFiledReference.GetLength(0); y++)
-                {
-                    playingFieldConfigurator.PlayingFiledReference[x, y].cellObject.gameObject.GetComponent<Button>().interactable = false;
-                }
-
-            activateTimer = true;
-            turnTimeTimer = turnTime;
+            StartCoroutine(DelayedUpdatePlayerTurn());
+            playingFieldConfigurator.DisableButtons(false);
         }
         // метод для обновления состояния игрового режима когда игрок ставит символ
         public override void PlayerPressedOnCell(int x, int y)
@@ -117,24 +110,15 @@ namespace TTT
                 else
                 {
                     // Если не заполнены, сменить текущего игрока
-                    activateTimer = true;
-                    turnTimeTimer = turnTime;
+                    StartCoroutine(DelayedUpdatePlayerTurn());
                 }
             }
         }
 
-        public override void UpdateMe()
+        IEnumerator DelayedUpdatePlayerTurn()
         {
-            if (activateTimer)
-                if (turnTimeTimer > 0)
-                {
-                    turnTimeTimer -= Time.deltaTime;
-                }
-                else
-                {
-                    activateTimer = false;
-                    UpdatePlayerTurn();
-                }
+            yield return new WaitForSeconds(turnTime);
+            UpdatePlayerTurn();
         }
 
         public override void StopGame()

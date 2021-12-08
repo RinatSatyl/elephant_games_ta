@@ -40,10 +40,5 @@ namespace TTT
         {
 
         }
-
-        public virtual void UpdateMe()
-        {
-
-        }
     }
 }
